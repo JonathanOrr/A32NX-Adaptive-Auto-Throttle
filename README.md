@@ -3,7 +3,7 @@ This is a plugin made using parts of the system logic from the A32NX A321NEO aut
 
 ## Copyright
 
-A32NX Freeware Project
+A32NX Adaptive Auto Throttle
 Copyright © 2020 Jonathan Orr
 
 This aircraft addon is licensed under the GNU General Public License V3.0 [License](LICENSE).
