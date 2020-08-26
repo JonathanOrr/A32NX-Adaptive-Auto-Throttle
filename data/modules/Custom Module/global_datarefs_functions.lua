@@ -24,11 +24,14 @@ DELTA_TIME = globalProperty("sim/operation/misc/frame_rate_period")
 
 --global a32nx datarefs
 A32nx_autothrust_on = createGlobalPropertyi("a32nx/debug/auto_thrust_on", 0, false, true, false)
-A32nx_target_spd = createGlobalPropertyi("a32nx/debug/target_speed", 100, false, true, false)
+A32nx_target_spd = createGlobalPropertyi("a32nx/debug/target_speed", 225, false, true, false)
 A32nx_thrust_control_output = createGlobalPropertyf("a32nx/debug/thrust_control_output", 0, false, true, false)
 
 --global pid array
-A32nx_auto_thrust = {P_gain = 2.15, I_gain = 2, D_gain = 35, I_delay = 60, Integral = 0, Current_error = 0, Min_error = -35, Max_error = 35, Error_offset = 6.4}
+A32nx_auto_thrust = {P_gain = 0.55, I_gain = 10, D_gain = 0.245, I_delay = 100, Integral = 0, Current_error = 0, Min_error = -5, Max_error = 5, Error_offset = 0}
+
+--experimental
+D_value = 0
 
 --global functions
 function A32nx_PID(pid_array, error)
@@ -55,6 +58,38 @@ function A32nx_PID(pid_array, error)
 	correction = Math_clamp(Math_clamp(correction, pid_array.Min_error, pid_array.Max_error) / pid_array.Max_error , 0, 1)
 
 	return correction
+end
+
+function A32nx_PID_time_indep(pid_array, error)
+    local last_error = pid_array.Current_error
+    
+    if get(DELTA_TIME) ~= 0 then
+        pid_array.Current_error = error + pid_array.Error_offset
+
+	    --Proportional--
+	    local correction = pid_array.Current_error * pid_array.P_gain
+
+	    --integral--
+	    pid_array.Integral = (pid_array.Integral * (pid_array.I_delay - 1) + pid_array.Current_error * get(DELTA_TIME)) / pid_array.I_delay
+
+	    --clamping the integral to minimise the delay
+	    pid_array.Integral = Math_clamp(pid_array.Integral, pid_array.Min_error, pid_array.Max_error)
+
+	    correction = correction + pid_array.Integral * pid_array.I_gain
+
+	    --derivative--
+	    --print((pid_array.Current_error - last_error) * pid_array.D_gain)
+
+	    correction = correction + (((pid_array.Current_error - last_error) / get(DELTA_TIME)) * pid_array.D_gain )
+
+	    --limit and rescale output range--
+        correction = Math_clamp(Math_clamp(correction, pid_array.Min_error, pid_array.Max_error) / pid_array.Max_error , 0, 1)
+
+        D_value = (((pid_array.Current_error - last_error) / get(DELTA_TIME)) * pid_array.D_gain )
+	    return correction
+
+    end
+
 end
 
 function set_anim_value(current_value, target, min, max, speed)

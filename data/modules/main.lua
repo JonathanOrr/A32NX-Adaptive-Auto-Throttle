@@ -38,7 +38,7 @@ A32nx_at_UI = contextWindow {
   minimumSize = { 340 , 420 };
   maximumSize = { 340 , 420 };
   gravity = { 0 , 1 , 0 , 1 };
-  visible = false ;
+  visible = true ;
   components = {
     at_ui {position = { 0 , 0 , 340 , 420 }}
   };
@@ -46,13 +46,13 @@ A32nx_at_UI = contextWindow {
 
 A32nx_at_graph = contextWindow {
   name = "A32NX A/T OUTPUT GRAPH";
-  position = { 50 , 50 , 420 , 340};
+  position = { 50 , 500 , 420 , 340};
   noBackground = true ;
   proportional = false ;
   minimumSize = { 420 , 340 };
   maximumSize = { 420 , 340 };
   gravity = { 0 , 1 , 0 , 1 };
-  visible = false ;
+  visible = true ;
   components = {
     at_graph {position = { 0 , 0 , 420 , 340 }}
   };

@@ -18,10 +18,11 @@ function update()
 
     if get(A32nx_autothrust_on) == 1 then
 
-		set(SimDR_throttle, A32nx_PID(A32nx_auto_thrust, get(A32nx_target_spd) - get(SimDR_aircraft_ias)))
-
+        if get(DELTA_TIME) ~= 0 then
+		    set(SimDR_throttle, set_anim_value(get(SimDR_throttle), A32nx_PID_time_indep(A32nx_auto_thrust, get(A32nx_target_spd) - get(SimDR_aircraft_ias)), 0, 1, 0.5))
+        end
 	end
 
-    set(A32nx_thrust_control_output, A32nx_PID(A32nx_auto_thrust, get(A32nx_target_spd) - get(SimDR_aircraft_ias)))
+    set(A32nx_thrust_control_output, get(SimDR_throttle))
 
 end
